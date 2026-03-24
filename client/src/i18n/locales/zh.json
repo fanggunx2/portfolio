@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "about": "关于"
+  },
+  "categories": {
+    "all": "全部",
+    "product": "产品",
+    "interaction": "交互",
+    "advertising": "广告"
+  },
+  "home": {
+    "loading": "加载中...",
+    "noWorks": "暂无作品"
+  },
+  "about": {
+    "defaultTitle": "关于我"
+  }
+}

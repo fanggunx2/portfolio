@@ -1,0 +1,18 @@
+{
+  "nav": {
+    "about": "About"
+  },
+  "categories": {
+    "all": "ALL",
+    "product": "PRODUCT",
+    "interaction": "INTERACTION",
+    "advertising": "ADVERTISING"
+  },
+  "home": {
+    "loading": "Loading...",
+    "noWorks": "No works yet"
+  },
+  "about": {
+    "defaultTitle": "About Me"
+  }
+}

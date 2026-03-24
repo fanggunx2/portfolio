@@ -1,0 +1,79 @@
+.about {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  /* 照片级蓝天白云 - 和首页一致 */
+  background:
+    url('https://images.unsplash.com/photo-1504312572408-5f7b074981f2?w=1920&q=90') center center / cover no-repeat fixed,
+    linear-gradient(180deg,
+      #5BA3D9 0%,
+      #7AB8E8 25%,
+      #9FCAEB 50%,
+      #BFDDEF 75%,
+      #D8EDF5 100%
+    );
+  background-blend-mode: overlay;
+  position: relative;
+}
+
+/* 云朵光效叠加 */
+.about::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse 400px 150px at 80% 15%, rgba(255,255,255,0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 300px 100px at 20% 25%, rgba(255,255,255,0.3) 0%, transparent 65%),
+    radial-gradient(ellipse 200px 60px at 40% 20%, rgba(200,220,240,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 180px 55px at 65% 18%, rgba(200,220,240,0.2) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.about-content {
+  max-width: 600px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.about-content h1 {
+  font-family: "Zen Kaku Gothic New", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0 0 30px;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  white-space: nowrap;
+}
+
+.divider {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.7);
+  margin: 0 auto 30px;
+}
+
+.about-content p {
+  color: rgba(255, 255, 255, 1);
+  line-height: 2;
+  margin: 0 0 20px;
+  letter-spacing: 0.05em;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .about {
+    padding: 60px 20px;
+  }
+
+  .about-content h1 {
+    font-size: 1.5rem;
+  }
+}

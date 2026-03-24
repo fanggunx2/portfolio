@@ -1,0 +1,554 @@
+.admin {
+  min-height: 100vh;
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.admin-header h1 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin: 0;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Login */
+.admin-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.login-form h1 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 30px;
+}
+
+.login-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.login-form button,
+.upload-form button {
+  padding: 12px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: opacity 0.3s;
+}
+
+.login-form button:hover,
+.upload-form button:hover {
+  opacity: 0.9;
+}
+
+.login-form button:disabled,
+.upload-form button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #c44;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.success {
+  color: #4a4;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* About 页面编辑 - 标题输入框更小 */
+.upload-form > .form-group > input {
+  font-size: 1rem;
+  padding: 8px 12px;
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 20px;
+}
+
+/* Upload */
+.upload-section,
+.works-list {
+  margin-bottom: 40px;
+}
+
+.upload-section h2,
+.works-list h2 {
+  font-size: 1.2rem;
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.file-input {
+  display: block;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.file-input:hover {
+  border-color: var(--accent);
+}
+
+.file-input input {
+  display: none;
+}
+
+/* Works List */
+.works-table {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.works-table.sortable-works .work-item {
+  cursor: grab;
+}
+
+.works-table.sortable-works .work-item:active {
+  cursor: grabbing;
+}
+
+.works-table.sortable-works .work-item.dragging {
+  opacity: 0.5;
+  background: #f0f0f0;
+  border-style: dashed;
+}
+
+.works-table.sortable-works .work-item.dragging * {
+  pointer-events: none !important;
+}
+
+/* Work reorder buttons */
+.work-reorder {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.work-reorder button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.work-reorder button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.work-reorder button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.work-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+}
+
+.work-item img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.work-details {
+  flex: 1;
+}
+
+.work-details h3 {
+  font-size: 1rem;
+  font-weight: 300;
+  margin: 0 0 4px;
+}
+
+.work-details p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.delete-btn {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid #c44;
+  color: #c44;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.delete-btn:hover {
+  background: #c44;
+  color: white;
+}
+
+/* Edit buttons */
+.work-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.edit-btn:hover {
+  background: var(--accent);
+  color: white;
+}
+
+/* Edit form */
+.edit-form {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1;
+}
+
+.edit-form img {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+}
+
+.edit-form .work-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.edit-form input,
+.edit-form textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.edit-form input:focus,
+.edit-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.edit-file {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+}
+
+.edit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-btn {
+  padding: 8px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.save-btn:hover {
+  opacity: 0.9;
+}
+
+.cancel-btn {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  border-color: var(--text-secondary);
+}
+
+/* Cropper Modal */
+.cropper-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.cropper-content {
+  background: var(--bg);
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+}
+
+.cropper-content h3 {
+  margin: 0 0 5px;
+  font-weight: 300;
+}
+
+.cropper-content p {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: 15px;
+}
+
+.cropper-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: #1a1a1a;
+  margin-bottom: 15px;
+}
+
+.cropper-controls {
+  margin-bottom: 15px;
+}
+
+.zoom-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-secondary);
+}
+
+.zoom-control input {
+  width: 150px;
+  cursor: pointer;
+}
+
+.cropper-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Preview thumbnail */
+.preview-thumb {
+  width: 120px;
+  height: 90px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.preview-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.empty {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 40px;
+}
+
+@media (max-width: 768px) {
+  .admin {
+    padding: 20px;
+  }
+
+  .work-item {
+    flex-wrap: wrap;
+  }
+
+  .work-details {
+    flex: 1 1 calc(100% - 100px);
+  }
+
+  .delete-btn {
+    margin-left: auto;
+  }
+}
+
+/* Main image selection */
+.form-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 16px 0 8px;
+}
+
+.preview-thumbs.main-select {
+  gap: 8px;
+}
+
+.preview-thumbs.main-select .preview-thumb {
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+.preview-thumbs.main-select .preview-thumb:hover {
+  border-color: var(--text-secondary);
+}
+
+.preview-thumbs.main-select .preview-thumb.selected {
+  border-color: var(--accent);
+}
+
+/* Drag and drop */
+.preview-thumbs.main-select.sortable .preview-thumb {
+  cursor: grab;
+}
+
+.preview-thumbs.main-select.sortable .preview-thumb.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.preview-thumbs.main-select .preview-thumb:active {
+  cursor: grabbing;
+}
+
+.remove-image-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.preview-thumbs.main-select .preview-thumb:hover .remove-image-btn {
+  opacity: 1;
+}
+
+.remove-image-btn:hover {
+  background: rgba(255, 0, 0, 0.8);
+}
+
+.main-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--accent);
+  color: white;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* Video input */
+.video-input {
+  margin-top: 8px;
+}
+
+.remove-video {
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: none;
+  border: 1px solid var(--text-secondary);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.remove-video:hover {
+  border-color: #ff4444;
+  color: #ff4444;
+}
