@@ -1,5 +1,5 @@
 export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-const USE_MOCK = true; // Set to false when backend is deployed
+const USE_MOCK = false; // Set to false when backend is deployed
 
 export interface AboutContent {
   title: string;
