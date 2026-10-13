@@ -1,5 +1,0 @@
-{
-  "buildCommand": "echo 'Using pre-built files'",
-  "outputDirectory": "client/dist",
-  "installCommand": "echo 'No install needed'"
-}

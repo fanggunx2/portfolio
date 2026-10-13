@@ -39,6 +39,10 @@ npm run build
 
 生成的静态网站在 `client/dist/`。
 
+## 公開 | Publish
+
+网站托管在 EdgeOne Pages（国际版，国内可访问）。推送到 GitHub 的 `main` 分支后会自动构建发布，构建设置见 `edgeone.json`。
+
 ## 技術スタック | Tech Stack
 
 - Frontend: React + TypeScript + Vite
