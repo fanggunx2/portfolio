@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { aboutApi, type AboutContent } from '../api';
+import { aboutApi, type AboutI18n, type AboutLang } from '../api';
 import './About.css';
 
 export function About() {
-  const { t } = useTranslation();
-  const [content, setContent] = useState<AboutContent | null>(null);
+  const { t, i18n } = useTranslation();
+  const [about, setAbout] = useState<AboutI18n | null>(null);
 
   useEffect(() => {
-    aboutApi.getAbout().then(setContent);
+    aboutApi.getAbout().then(setAbout);
   }, []);
 
-  if (!content) return null;
+  if (!about) return null;
+
+  // Current language, falling back to Chinese if that language hasn't been written yet
+  const lang = (i18n.resolvedLanguage || 'zh') as AboutLang;
+  const content = about[lang]?.body ? about[lang] : about.zh;
 
   return (
     <div className="about">

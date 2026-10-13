@@ -16,6 +16,21 @@ fs.mkdirSync(DATA_DIR, { recursive: true });
 
 const mediaPath = (url) => path.join(UPLOADS_DIR, path.basename(url));
 
+const ABOUT_LANGS = ['zh', 'ja', 'en'];
+
+// About content as { zh: {title, body}, ja: {...}, en: {...} }
+const loadAbout = (cb) => {
+  db.all('SELECT lang, title, body FROM about_i18n', [], (err, rows) => {
+    if (err) return cb(err);
+    const about = {};
+    for (const lang of ABOUT_LANGS) {
+      const row = rows.find(r => r.lang === lang);
+      about[lang] = { title: row?.title || '', body: row?.body || '' };
+    }
+    cb(null, about);
+  });
+};
+
 // Write the JSON files the published (static) site reads
 const exportStatic = () => {
   db.all('SELECT * FROM works ORDER BY sort_order ASC, created_at DESC', [], (err, works) => {
@@ -27,9 +42,9 @@ const exportStatic = () => {
     });
     fs.writeFileSync(path.join(DATA_DIR, 'works.json'), JSON.stringify(data, null, 2) + '\n');
   });
-  db.get('SELECT title, body FROM about WHERE id = 1', [], (err, about) => {
+  loadAbout((err, about) => {
     if (err) return console.error('Export failed:', err);
-    fs.writeFileSync(path.join(DATA_DIR, 'about.json'), JSON.stringify(about || { title: '', body: '' }, null, 2) + '\n');
+    fs.writeFileSync(path.join(DATA_DIR, 'about.json'), JSON.stringify(about, null, 2) + '\n');
   });
 };
 
@@ -414,27 +429,31 @@ app.delete('/api/works/:id', authenticate, (req, res) => {
 // ============ ABOUT ROUTES ============
 
 app.get('/api/about', (req, res) => {
-  db.get('SELECT title, body FROM about WHERE id = 1', [], (err, about) => {
+  loadAbout((err, about) => {
     if (err) {
       return res.status(500).json({ error: 'Failed to fetch about' });
     }
-    res.json(about || { title: '', body: '' });
+    res.json(about);
   });
 });
 
+// Body: { zh: {title, body}, ja: {...}, en: {...} }
 app.put('/api/about', authenticate, (req, res) => {
-  const { title = '', body = '' } = req.body;
-  db.run(
-    'INSERT INTO about (id, title, body) VALUES (1, ?, ?) ON CONFLICT(id) DO UPDATE SET title = excluded.title, body = excluded.body',
-    [title, body],
-    (err) => {
-      if (err) {
-        return res.status(500).json({ error: 'Failed to update about' });
-      }
+  const updates = ABOUT_LANGS.map(lang => new Promise((resolve, reject) => {
+    const { title = '', body = '' } = req.body[lang] || {};
+    db.run(
+      'INSERT INTO about_i18n (lang, title, body) VALUES (?, ?, ?) ON CONFLICT(lang) DO UPDATE SET title = excluded.title, body = excluded.body',
+      [lang, title, body],
+      (err) => (err ? reject(err) : resolve())
+    );
+  }));
+  Promise.all(updates)
+    .then(() => loadAbout((err, about) => {
+      if (err) throw err;
       exportStatic();
-      res.json({ title, body });
-    }
-  );
+      res.json(about);
+    }))
+    .catch(() => res.status(500).json({ error: 'Failed to update about' }));
 });
 
 // Start server (local only: the admin is never exposed to the internet)

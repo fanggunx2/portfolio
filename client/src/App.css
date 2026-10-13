@@ -179,6 +179,14 @@ body {
   }
 }
 
+/* Chinese paragraphs: Zen Kaku Gothic (a Japanese font) lacks many simplified
+   characters, so long Chinese text uses one Chinese font instead of mixing two */
+:lang(zh) .about-content,
+:lang(zh) .about-content h1,
+:lang(zh) .work-info {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
 /* Nav on white pages (work detail) */
 .nav--on-light {
   background: rgba(255, 255, 255, 0.92);

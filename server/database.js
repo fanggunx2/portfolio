@@ -16,10 +16,10 @@ db.serialize(() => {
     )
   `);
 
-  // Create about table (single row, id = 1)
+  // Create about table (one row per language: zh / ja / en)
   db.run(`
-    CREATE TABLE IF NOT EXISTS about (
-      id INTEGER PRIMARY KEY,
+    CREATE TABLE IF NOT EXISTS about_i18n (
+      lang TEXT PRIMARY KEY,
       title TEXT,
       body TEXT
     )

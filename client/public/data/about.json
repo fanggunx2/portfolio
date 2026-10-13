@@ -1,4 +1,14 @@
 {
-  "title": "",
-  "body": ""
+  "zh": {
+    "title": "关于我们",
+    "body": "我们以产品设计为核心，重新编辑文化、日常行为、记忆与感知。\n我们不急于把世界分成美与丑、对与错、有用与无用，也不相信所有事情都必须站在某一边。比起给出答案，我们更愿意在矛盾、模糊和中间地带里，发现新的趣味与可能。\n每个人都可以是王大鸟。"
+  },
+  "ja": {
+    "title": "私たちについて",
+    "body": "私たちはプロダクトデザインを軸に、文化、日々のふるまい、記憶と知覚を編集し直しています。\n世界を美と醜、正と誤、役に立つものと立たないものに急いで分けようとはしません。すべての物事がどちらか一方の側に立たなければならないとも思っていません。答えを出すことよりも、矛盾や曖昧さ、そのあいだにある領域のなかに、新しいおもしろさと可能性を見つけていきたいと考えています。\n誰もが、ワンダーバードになれる。"
+  },
+  "en": {
+    "title": "About Us",
+    "body": "With product design at our core, we re-edit culture, everyday behavior, memory, and perception.\nWe are in no hurry to divide the world into beautiful and ugly, right and wrong, useful and useless, nor do we believe everything must take a side. Rather than offering answers, we would rather find new delight and possibility within contradiction, ambiguity, and the spaces in between.\nEveryone can be a Wonder Bird."
+  }
 }

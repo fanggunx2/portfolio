@@ -26,4 +26,9 @@ i18n
     },
   });
 
+// Keep <html lang> in sync so CSS can pick a Chinese font for zh (see App.css)
+const syncHtmlLang = (lng: string) => { document.documentElement.lang = lng; };
+syncHtmlLang(i18n.resolvedLanguage || 'zh');
+i18n.on('languageChanged', () => syncHtmlLang(i18n.resolvedLanguage || 'zh'));
+
 export default i18n;

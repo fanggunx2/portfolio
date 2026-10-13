@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, type FormEvent } from 'react';
 import Cropper from 'react-easy-crop';
-import { api, aboutApi, thumbUrl, type Work, type Category, type AboutContent } from '../api';
+import { api, aboutApi, thumbUrl, type Work, type Category, type AboutI18n, type AboutLang } from '../api';
 import './Admin.css';
 
 interface CropArea {
@@ -54,9 +54,9 @@ export function Admin() {
   const [workDragIndex, setWorkDragIndex] = useState<number | null>(null);
 
   // About content state
-  const [aboutContent, setAboutContent] = useState<AboutContent | null>(null);
-  const [aboutTitle, setAboutTitle] = useState('');
-  const [aboutBody, setAboutBody] = useState('');
+  const emptyAbout = { title: '', body: '' };
+  const [about, setAbout] = useState<AboutI18n>({ zh: emptyAbout, ja: emptyAbout, en: emptyAbout });
+  const [aboutLang, setAboutLang] = useState<AboutLang>('zh');
   const [aboutSaved, setAboutSaved] = useState(false);
 
   // Reorder works handlers
@@ -131,9 +131,7 @@ export function Admin() {
           setIsAuthenticated(true);
           loadWorks();
           aboutApi.getAbout().then(data => {
-            setAboutContent(data);
-            setAboutTitle(data.title);
-            setAboutBody(data.body);
+            setAbout(data);
           });
         })
         .catch(() => {
@@ -526,8 +524,8 @@ export function Admin() {
             e.preventDefault();
             try {
               const token = localStorage.getItem('token')!;
-              const result = await aboutApi.updateAbout({ title: aboutTitle, body: aboutBody }, token);
-              setAboutContent(result);
+              const result = await aboutApi.updateAbout(about, token);
+              setAbout(result);
               setAboutSaved(true);
               setTimeout(() => setAboutSaved(false), 2000);
             } catch {
@@ -536,19 +534,31 @@ export function Admin() {
           }}
           className="upload-form"
         >
+          <div className="about-lang-tabs">
+            {([['zh', '中文'], ['ja', '日本語'], ['en', 'English']] as const).map(([code, label]) => (
+              <button
+                key={code}
+                type="button"
+                className={`about-lang-tab ${aboutLang === code ? 'active' : ''}`}
+                onClick={() => setAboutLang(code)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           <div className="form-group">
             <input
               type="text"
               placeholder="タイトル"
-              value={aboutTitle}
-              onChange={e => setAboutTitle(e.target.value)}
+              value={about[aboutLang].title}
+              onChange={e => setAbout({ ...about, [aboutLang]: { ...about[aboutLang], title: e.target.value } })}
             />
           </div>
           <div className="form-group">
             <textarea
               placeholder="自己紹介（改行で段落を追加）"
-              value={aboutBody}
-              onChange={e => setAboutBody(e.target.value)}
+              value={about[aboutLang].body}
+              onChange={e => setAbout({ ...about, [aboutLang]: { ...about[aboutLang], body: e.target.value } })}
               rows={8}
             />
           </div>

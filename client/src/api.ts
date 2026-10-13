@@ -11,13 +11,16 @@ export interface AboutContent {
   body: string;
 }
 
+export type AboutLang = 'zh' | 'ja' | 'en';
+export type AboutI18n = Record<AboutLang, AboutContent>;
+
 export const aboutApi = {
-  getAbout: async (): Promise<AboutContent> => {
+  getAbout: async (): Promise<AboutI18n> => {
     const res = await fetch(IS_STATIC ? '/data/about.json' : `${API_BASE}/about`);
     return res.json();
   },
 
-  updateAbout: async (content: AboutContent, token: string): Promise<AboutContent> => {
+  updateAbout: async (content: AboutI18n, token: string): Promise<AboutI18n> => {
     const res = await fetch(`${API_BASE}/about`, {
       method: 'PUT',
       headers: {

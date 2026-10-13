@@ -552,3 +552,25 @@
   border-color: #ff4444;
   color: #ff4444;
 }
+
+/* About: language tabs */
+.about-lang-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.about-lang-tab {
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.about-lang-tab.active {
+  border-color: var(--text);
+  color: var(--text);
+}
