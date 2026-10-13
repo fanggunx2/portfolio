@@ -22,8 +22,13 @@ export function About() {
       <div className="about-content">
         <h1>{content.title || t('about.defaultTitle')}</h1>
         <div className="divider"></div>
-        {content.body.split('\n').map((line, i) => (
-          <p key={i}>{line}</p>
+        {/* Blank lines separate stanzas; every other line break is kept as written */}
+        {content.body.split(/\n\s*\n/).map((stanza, i) => (
+          <p key={i}>
+            {stanza.split('\n').map((line, j) => (
+              <span key={j} className="about-line">{line}</span>
+            ))}
+          </p>
         ))}
       </div>
     </div>
