@@ -19,8 +19,9 @@ const LANGUAGES = [
 
 function Navigation() {
   const { t, i18n } = useTranslation();
-  // Work pages have a white background, so the nav switches to dark text there
-  const onLightPage = useLocation().pathname.startsWith('/work/');
+  // Work pages and the admin have a white background, so the nav switches to dark text there
+  const { pathname } = useLocation();
+  const onLightPage = pathname.startsWith('/work/') || pathname.startsWith('/admin');
 
   return (
     <nav className={`nav ${onLightPage ? 'nav--on-light' : ''}`}>

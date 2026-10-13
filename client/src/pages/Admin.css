@@ -1,6 +1,6 @@
 .admin {
   min-height: 100vh;
-  padding: 40px;
+  padding: 104px 40px 40px; /* below the fixed site nav */
   max-width: 800px;
   margin: 0 auto;
 }
@@ -437,7 +437,7 @@
 
 @media (max-width: 768px) {
   .admin {
-    padding: 20px;
+    padding: 80px 20px 20px;
   }
 
   .work-item {
@@ -560,7 +560,7 @@
   margin-bottom: 16px;
 }
 
-.about-lang-tab {
+.upload-form .about-lang-tab {
   background: none;
   border: 1px solid var(--border);
   padding: 6px 14px;
@@ -570,7 +570,35 @@
   cursor: pointer;
 }
 
-.about-lang-tab.active {
+.upload-form .about-lang-tab.active {
   border-color: var(--text);
   color: var(--text);
+}
+
+/* Publish */
+.publish-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.publish-status {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.publish-btn {
+  background: var(--accent);
+  color: #FFFFFF;
+  border: 1px solid var(--accent);
+  padding: 8px 16px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.publish-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
 }

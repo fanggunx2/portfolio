@@ -114,6 +114,25 @@ export const api = {
     if (!res.ok) throw new Error('Failed to reorder works');
   },
 
+  // Publish: commit the site content and push to GitHub (EdgeOne rebuilds the site)
+  publishStatus: async (token: string): Promise<{ pending: number }> => {
+    const res = await fetch(`${API_BASE}/publish/status`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error('Failed to check publish status');
+    return res.json();
+  },
+
+  publish: async (token: string): Promise<{ success: boolean; commit: string }> => {
+    const res = await fetch(`${API_BASE}/publish`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to publish');
+    return data;
+  },
+
   // Auth
   login: async (username: string, password: string): Promise<{ token: string }> => {
     const res = await fetch(`${API_BASE}/auth/login`, {

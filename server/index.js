@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const db = require('./database');
-const { optimizeUploads, thumbOf } = require('./media');
+const { optimizeUploads, thumbOf, ogOf, ensureOgImage } = require('./media');
 
 // Uploaded media live inside the client's public folder so they ship with the static site
 const UPLOADS_DIR = path.join(__dirname, '..', 'client', 'public', 'uploads');
@@ -15,6 +15,20 @@ fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
 const mediaPath = (url) => path.join(UPLOADS_DIR, path.basename(url));
+
+const parseImages = (json) => {
+  try { return json ? JSON.parse(json) : []; } catch { return []; }
+};
+
+// Delete published media files (and their generated variants); originals are kept
+const removeMedia = (urls) => {
+  for (const url of urls.filter(Boolean)) {
+    for (const variant of [url, thumbOf(url), ogOf(url)]) {
+      const filePath = mediaPath(variant);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    }
+  }
+};
 
 const ABOUT_LANGS = ['zh', 'ja', 'en'];
 
@@ -35,12 +49,11 @@ const loadAbout = (cb) => {
 const exportStatic = () => {
   db.all('SELECT * FROM works ORDER BY sort_order ASC, created_at DESC', [], (err, works) => {
     if (err) return console.error('Export failed:', err);
-    const data = works.map(w => {
-      let images = [];
-      try { images = w.images ? JSON.parse(w.images) : []; } catch { images = []; }
-      return { ...w, images, video: w.video || null };
-    });
+    const data = works.map(w => ({ ...w, images: parseImages(w.images), video: w.video || null }));
     fs.writeFileSync(path.join(DATA_DIR, 'works.json'), JSON.stringify(data, null, 2) + '\n');
+    // Link-preview images for each cover (used by client/scripts/spa-routes.mjs)
+    Promise.all(data.map(w => ensureOgImage(mediaPath(w.image_url))))
+      .catch(err => console.error('OG image failed:', err));
   });
   loadAbout((err, about) => {
     if (err) return console.error('Export failed:', err);
@@ -316,6 +329,7 @@ app.put('/api/works/:id', authenticate, uploadMixed.fields([
     let image_url = work.image_url;
     let existingImages = [];
     let video = work.video || null;
+    const oldImages = [work.image_url, ...parseImages(work.images)];
 
     // Use allImages from frontend if provided (after reordering/deletion)
     if (allImages) {
@@ -381,6 +395,9 @@ app.put('/api/works/:id', authenticate, uploadMixed.fields([
           return res.status(500).json({ error: 'Failed to update work: ' + err.message });
         }
         console.log('Update success:', { id, title, video });
+        // Images removed in the editor are no longer referenced: drop their files
+        const kept = new Set([image_url, ...existingImages]);
+        removeMedia(oldImages.filter(url => !kept.has(url)));
         exportStatic();
         res.json({
           id: parseInt(id),
@@ -406,15 +423,7 @@ app.delete('/api/works/:id', authenticate, (req, res) => {
     }
 
     // Delete the work's image and video files
-    let images = [];
-    try { images = work.images ? JSON.parse(work.images) : []; } catch { images = []; }
-    const urls = [work.image_url, ...images].filter(Boolean);
-    for (const url of [...urls, ...urls.map(thumbOf), work.video].filter(Boolean)) {
-      const filePath = mediaPath(url);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
+    removeMedia([work.image_url, ...parseImages(work.images), work.video]);
 
     db.run('DELETE FROM works WHERE id = ?', [id], (err) => {
       if (err) {
@@ -454,6 +463,51 @@ app.put('/api/about', authenticate, (req, res) => {
       res.json(about);
     }))
     .catch(() => res.status(500).json({ error: 'Failed to update about' }));
+});
+
+// ============ PUBLISH ROUTES ============
+// Publishing = commit the site content and push to GitHub; EdgeOne Pages rebuilds from main.
+
+const { execFile } = require('child_process');
+const REPO_DIR = path.join(__dirname, '..');
+// Only content the admin writes is published here, never code changes
+const CONTENT_PATHS = ['client/public/uploads', 'client/public/data', 'server/portfolio.db'];
+
+const git = (...args) => new Promise((resolve, reject) => {
+  execFile('git', args, { cwd: REPO_DIR, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } },
+    (err, stdout, stderr) => (err ? reject(new Error(stderr.trim() || err.message)) : resolve(stdout.trim())));
+});
+
+const pendingChanges = async () => {
+  const out = await git('status', '--porcelain', '--', ...CONTENT_PATHS);
+  return out ? out.split('\n').length : 0;
+};
+
+app.get('/api/publish/status', authenticate, async (req, res) => {
+  try {
+    res.json({ pending: await pendingChanges() });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/publish', authenticate, async (req, res) => {
+  try {
+    const branch = await git('rev-parse', '--abbrev-ref', 'HEAD');
+    if (branch !== 'main') {
+      return res.status(409).json({ error: `Not on main (current branch: ${branch})` });
+    }
+    if (await pendingChanges()) {
+      await git('add', '--all', '--', ...CONTENT_PATHS);
+      const stamp = new Date().toLocaleString('sv-SE', { timeZone: 'Asia/Tokyo' }).slice(0, 16);
+      await git('commit', '-m', `Update works (${stamp})`, '--', ...CONTENT_PATHS);
+    }
+    await git('push', 'origin', 'main');
+    res.json({ success: true, commit: await git('rev-parse', '--short', 'HEAD') });
+  } catch (err) {
+    console.error('Publish failed:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Start server (local only: the admin is never exposed to the internet)

@@ -144,6 +144,37 @@ export function Admin() {
     api.getWorks().then(data => setWorks(data));
   };
 
+  // Publish state: number of unpublished content changes, checked every few seconds
+  const [pendingChanges, setPendingChanges] = useState(0);
+  const [publishing, setPublishing] = useState(false);
+  const [publishMessage, setPublishMessage] = useState('');
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const check = () => {
+      const token = localStorage.getItem('token');
+      if (token) api.publishStatus(token).then(s => setPendingChanges(s.pending)).catch(() => {});
+    };
+    check();
+    const timer = setInterval(check, 5000);
+    return () => clearInterval(timer);
+  }, [isAuthenticated]);
+
+  const handlePublish = async () => {
+    if (!confirm('サイトに公開しますか？（1〜2分で反映されます）')) return;
+    setPublishing(true);
+    setPublishMessage('');
+    try {
+      await api.publish(localStorage.getItem('token')!);
+      setPendingChanges(0);
+      setPublishMessage('公開しました。1〜2分でサイトに反映されます');
+    } catch (err) {
+      setPublishMessage(`公開に失敗しました：${(err as Error).message}`);
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -511,9 +542,21 @@ export function Admin() {
 
       <header className="admin-header">
         <h1>作品管理</h1>
-        <button onClick={handleLogout} className="logout-btn">
-          ログアウト
-        </button>
+        <div className="publish-bar">
+          <span className="publish-status">
+            {publishMessage || (pendingChanges > 0 ? '未公開の変更があります' : '公開済み')}
+          </span>
+          <button
+            onClick={handlePublish}
+            className="publish-btn"
+            disabled={publishing || pendingChanges === 0}
+          >
+            {publishing ? '公開中…' : 'サイトに公開'}
+          </button>
+          <button onClick={handleLogout} className="logout-btn">
+            ログアウト
+          </button>
+        </div>
       </header>
 
       {/* About ページ編集 */}

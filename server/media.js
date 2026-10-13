@@ -80,4 +80,13 @@ const optimizeUploads = async (req, res, next) => {
 // The small version of an optimized image, if there is one
 const thumbOf = (filename) => filename.replace(/\.webp$/, '-thumb.webp');
 
-module.exports = { optimizeFile, optimizeUploads, thumbOf, ORIGINALS_DIR };
+// The link-preview (Open Graph) image of a work cover: 1200x630 JPEG, which every social app accepts
+const ogOf = (filename) => filename.replace(/\.webp$/, '-og.jpg');
+
+const ensureOgImage = async (webpPath) => {
+  const ogPath = ogOf(webpPath);
+  if (ogPath === webpPath || fs.existsSync(ogPath) || !fs.existsSync(webpPath)) return;
+  await sharp(webpPath).resize(1200, 630, { fit: 'cover' }).jpeg({ quality: 82 }).toFile(ogPath);
+};
+
+module.exports = { optimizeFile, optimizeUploads, thumbOf, ogOf, ensureOgImage, ORIGINALS_DIR };
