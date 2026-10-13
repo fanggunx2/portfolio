@@ -19,7 +19,7 @@
 - 图片和视频保存在 `client/public/uploads/`
 - 上传的图片会自动生成网页用的大图（WebP，最长边 2400px）和首页用的小图（`-thumb.webp`）
 - 上传的视频会自动压缩为 H.264、20MB 以内（使用 macOS 自带功能，见 `scripts/compress-video.swift`）
-- 原始文件保存在 `server/originals/`，只留在本机，不会发布
+- 原始文件保存在 `~/Documents/WonderBird 原图/`（由 iCloud 备份），不会发布
 - 发布时把这两个文件夹和 `server/portfolio.db` 一起提交推送即可
 
 ## 起動方法 | How to Run（本地编辑）

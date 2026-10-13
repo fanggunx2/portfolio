@@ -1,9 +1,11 @@
 // Turns uploaded originals into web-ready files:
 //  - images → <name>.webp (longest side ≤ 2400px) + <name>-thumb.webp (≤ 600px, for the home page bubbles)
 //  - videos → <name>.mp4, H.264, ≤ 20MB (via scripts/compress-video.swift, macOS only)
-// Originals are moved to server/originals/, which stays on this Mac and is never published.
+// Originals are moved to ~/Documents/WonderBird 原图/ (backed up by iCloud, never published).
+// Set ORIGINALS_DIR to keep them somewhere else.
 
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { execFile } = require('child_process');
 const { promisify } = require('util');
@@ -11,7 +13,7 @@ const sharp = require('sharp');
 
 const execFileAsync = promisify(execFile);
 
-const ORIGINALS_DIR = path.join(__dirname, 'originals');
+const ORIGINALS_DIR = process.env.ORIGINALS_DIR || path.join(os.homedir(), 'Documents', 'WonderBird 原图');
 const VIDEO_SCRIPT = path.join(__dirname, '..', 'scripts', 'compress-video.swift');
 const VIDEO_BIN = path.join(__dirname, '.bin', 'compress-video');
 
