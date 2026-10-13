@@ -16,6 +16,17 @@ const template = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
 const works = JSON.parse(fs.readFileSync(path.join(dist, 'data', 'works.json'), 'utf8'));
 const about = JSON.parse(fs.readFileSync(path.join(dist, 'data', 'about.json'), 'utf8'));
 
+// Fail the build if a work points at a file that isn't there. The host's filesystem is
+// case-sensitive (unlike macOS), so a .MP4/.mp4 mismatch would otherwise ship a broken page;
+// failing keeps the previous deployment live instead.
+const missing = works
+  .flatMap(w => [w.image_url, ...w.images, w.video])
+  .filter(url => url && !fs.existsSync(path.join(dist, url)));
+if (missing.length) {
+  console.error(`Missing media files (check filename case):\n  ${missing.join('\n  ')}`);
+  process.exit(1);
+}
+
 const SITE_NAME = 'WONDER BIRD';
 const DEFAULT_IMAGE = '/og-image.jpg';
 // First two lines of the Chinese About text
