@@ -4,7 +4,34 @@ const path = require('path');
 const multer = require('multer');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 const db = require('./database');
+const { optimizeUploads, thumbOf } = require('./media');
+
+// Uploaded media live inside the client's public folder so they ship with the static site
+const UPLOADS_DIR = path.join(__dirname, '..', 'client', 'public', 'uploads');
+const DATA_DIR = path.join(__dirname, '..', 'client', 'public', 'data');
+fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+fs.mkdirSync(DATA_DIR, { recursive: true });
+
+const mediaPath = (url) => path.join(UPLOADS_DIR, path.basename(url));
+
+// Write the JSON files the published (static) site reads
+const exportStatic = () => {
+  db.all('SELECT * FROM works ORDER BY sort_order ASC, created_at DESC', [], (err, works) => {
+    if (err) return console.error('Export failed:', err);
+    const data = works.map(w => {
+      let images = [];
+      try { images = w.images ? JSON.parse(w.images) : []; } catch { images = []; }
+      return { ...w, images, video: w.video || null };
+    });
+    fs.writeFileSync(path.join(DATA_DIR, 'works.json'), JSON.stringify(data, null, 2) + '\n');
+  });
+  db.get('SELECT title, body FROM about WHERE id = 1', [], (err, about) => {
+    if (err) return console.error('Export failed:', err);
+    fs.writeFileSync(path.join(DATA_DIR, 'about.json'), JSON.stringify(about || { title: '', body: '' }, null, 2) + '\n');
+  });
+};
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,12 +41,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'portfolio-secret-key-2024';
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'uploads'));
+    cb(null, UPLOADS_DIR);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -47,7 +74,7 @@ const uploadMultiple = upload.array('images', 10); // Max 10 images
 // Video upload
 const videoStorage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'uploads'));
+    cb(null, UPLOADS_DIR);
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -167,7 +194,7 @@ app.get('/api/works/:id', (req, res) => {
 app.post('/api/works', authenticate, uploadMixed.fields([
   { name: 'images', maxCount: 10 },
   { name: 'video', maxCount: 1 }
-]), (req, res) => {
+]), optimizeUploads, (req, res) => {
   const files = req.files;
   const imageFiles = Array.isArray(files)
     ? files.filter(f => f.fieldname === 'images')
@@ -204,6 +231,7 @@ app.post('/api/works', authenticate, uploadMixed.fields([
       if (err) {
         return res.status(500).json({ error: 'Failed to create work' });
       }
+      exportStatic();
       res.json({
         id: this.lastID,
         title,
@@ -236,6 +264,7 @@ app.put('/api/works/reorder', authenticate, (req, res) => {
 
   Promise.all(statements)
     .then(() => {
+      exportStatic();
       res.json({ success: true });
     })
     .catch((err) => {
@@ -247,7 +276,7 @@ app.put('/api/works/reorder', authenticate, (req, res) => {
 app.put('/api/works/:id', authenticate, uploadMixed.fields([
   { name: 'images', maxCount: 10 },
   { name: 'video', maxCount: 1 }
-]), (req, res) => {
+]), optimizeUploads, (req, res) => {
   const { id } = req.params;
   const { title, description, category, mainImageIndex, allImages, deleteVideo } = req.body;
 
@@ -299,7 +328,6 @@ app.put('/api/works/:id', authenticate, uploadMixed.fields([
     }
 
     const workCategory = category || work.category || 'product';
-    const fs = require('fs');
 
     // If new images uploaded, add them to the end
     if (imageFiles && imageFiles.length > 0) {
@@ -309,7 +337,7 @@ app.put('/api/works/:id', authenticate, uploadMixed.fields([
 
     // If video deletion requested (check first, before processing new video)
     if (deleteVideo === 'true' && video) {
-      const oldVideoPath = path.join(__dirname, video);
+      const oldVideoPath = mediaPath(video);
       if (fs.existsSync(oldVideoPath)) {
         fs.unlinkSync(oldVideoPath);
       }
@@ -320,7 +348,7 @@ app.put('/api/works/:id', authenticate, uploadMixed.fields([
     if (videoFile) {
       // Delete old video if exists (and wasn't already deleted)
       if (video && deleteVideo !== 'true') {
-        const oldVideoPath = path.join(__dirname, video);
+        const oldVideoPath = mediaPath(video);
         if (fs.existsSync(oldVideoPath)) {
           fs.unlinkSync(oldVideoPath);
         }
@@ -338,6 +366,7 @@ app.put('/api/works/:id', authenticate, uploadMixed.fields([
           return res.status(500).json({ error: 'Failed to update work: ' + err.message });
         }
         console.log('Update success:', { id, title, video });
+        exportStatic();
         res.json({
           id: parseInt(id),
           title,
@@ -356,28 +385,60 @@ app.put('/api/works/:id', authenticate, uploadMixed.fields([
 app.delete('/api/works/:id', authenticate, (req, res) => {
   const { id } = req.params;
 
-  db.get('SELECT image_url FROM works WHERE id = ?', [id], (err, work) => {
+  db.get('SELECT image_url, images, video FROM works WHERE id = ?', [id], (err, work) => {
     if (err || !work) {
       return res.status(404).json({ error: 'Work not found' });
     }
 
-    // Delete the file
-    const fs = require('fs');
-    const filePath = path.join(__dirname, work.image_url);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+    // Delete the work's image and video files
+    let images = [];
+    try { images = work.images ? JSON.parse(work.images) : []; } catch { images = []; }
+    const urls = [work.image_url, ...images].filter(Boolean);
+    for (const url of [...urls, ...urls.map(thumbOf), work.video].filter(Boolean)) {
+      const filePath = mediaPath(url);
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
     }
 
     db.run('DELETE FROM works WHERE id = ?', [id], (err) => {
       if (err) {
         return res.status(500).json({ error: 'Failed to delete work' });
       }
+      exportStatic();
       res.json({ success: true });
     });
   });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// ============ ABOUT ROUTES ============
+
+app.get('/api/about', (req, res) => {
+  db.get('SELECT title, body FROM about WHERE id = 1', [], (err, about) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to fetch about' });
+    }
+    res.json(about || { title: '', body: '' });
+  });
+});
+
+app.put('/api/about', authenticate, (req, res) => {
+  const { title = '', body = '' } = req.body;
+  db.run(
+    'INSERT INTO about (id, title, body) VALUES (1, ?, ?) ON CONFLICT(id) DO UPDATE SET title = excluded.title, body = excluded.body',
+    [title, body],
+    (err) => {
+      if (err) {
+        return res.status(500).json({ error: 'Failed to update about' });
+      }
+      exportStatic();
+      res.json({ title, body });
+    }
+  );
+});
+
+// Start server (local only: the admin is never exposed to the internet)
+app.listen(PORT, '127.0.0.1', () => {
+  console.log(`Admin server running on http://localhost:${PORT}`);
+  exportStatic();
 });

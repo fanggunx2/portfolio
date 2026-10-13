@@ -1,0 +1,91 @@
+[
+  {
+    "id": 11,
+    "title": "Chopstick with Hidden Toothpick",
+    "description": "An innovative disposable chopstick design featuring a toothpick seamlessly integrated into the natural seam between the two sticks. This minimalist industrial design transforms an everyday item into a clever two-in-one solution — combining sustainability with unexpected convenience.",
+    "image_url": "/uploads/1774402586517-684235370.webp",
+    "created_at": "2026-03-25 01:36:26",
+    "category": "product",
+    "images": [
+      "/uploads/1774402586522-31739509.webp"
+    ],
+    "video": null,
+    "sort_order": 0
+  },
+  {
+    "id": 10,
+    "title": "Umbrella Stand ",
+    "description": "A minimalist umbrella stand crafted from natural log with living moss growing in its cracks. Inspired by the Japanese philosophy of Wabi-sabi, this piece transforms ordinary wood into a living artwork — symbolizing the harmonious coexistence between humans and nature.",
+    "image_url": "/uploads/1774401884991-57918752.webp",
+    "created_at": "2026-03-25 01:24:45",
+    "category": "product",
+    "images": [],
+    "video": "/uploads/1774401884991-915897162.mp4",
+    "sort_order": 0
+  },
+  {
+    "id": 7,
+    "title": "THE PINNED MOMENT",
+    "description": "Inspired by the childhood urge to stop time with a single finger. It turns the relentless ticking into a permanent pause, making the 'now' last forever.",
+    "image_url": "/uploads/1772684882678-246195325.webp",
+    "created_at": "2026-03-05 04:28:03",
+    "category": "product",
+    "images": [],
+    "video": "/uploads/1772975809756-595449330.mp4",
+    "sort_order": 0
+  },
+  {
+    "id": 6,
+    "title": "ANNUAL RING RULER",
+    "description": "Inspired by the growing rings of a tree, this ruler helps you measure not just length but time. Each ring represents a year, turning everyday measurements into a journey through memory.",
+    "image_url": "/uploads/1772525053159-902245445.webp",
+    "created_at": "2026-03-03 08:04:13",
+    "category": "product",
+    "images": [
+      "/uploads/1772525053157-510862487.webp",
+      "/uploads/1772525053160-2744364.webp"
+    ],
+    "video": "/uploads/1772976152093-573321234.mp4",
+    "sort_order": 0
+  },
+  {
+    "id": 5,
+    "title": "FLUITAPE",
+    "description": "Inspired by the fluid rotation of magnetic tape, this player visualizes the passage of time through a tactile, hourglass-like interface. It’s not just about listening to music; it’s about feeling the physical weight of every second as it flows through the reels.",
+    "image_url": "/uploads/1772522265584-280995992.webp",
+    "created_at": "2026-03-03 07:17:45",
+    "category": "product",
+    "images": [
+      "/uploads/1772522265600-662802366.webp"
+    ],
+    "video": "/uploads/1772523297329-413068757.mp4",
+    "sort_order": 1
+  },
+  {
+    "id": 2,
+    "title": "Umbanana",
+    "description": "An umbrella with a whimsical banana-shaped handle, designed for the perfect grip. The curved form fits naturally in your hand — transforming each hold into a small moment of perfect comfort.",
+    "image_url": "/uploads/1774402698609-986746592.webp",
+    "created_at": "2026-02-19 02:45:08",
+    "category": "product",
+    "images": [
+      "/uploads/1774402698609-434675051.webp",
+      "/uploads/1771469108860-323604076.webp"
+    ],
+    "video": null,
+    "sort_order": 2
+  },
+  {
+    "id": 4,
+    "title": "THE EXCLAMATION",
+    "description": "The seal itself is the stem, and the impression is the dot. Only in the brief interval between pressing and lifting does the exclamation mark become whole—a bridge between the intention of the hand and the resonance on the page.",
+    "image_url": "/uploads/1772520013030-657046781.webp",
+    "created_at": "2026-03-03 06:40:13",
+    "category": "product",
+    "images": [
+      "/uploads/1772520013052-834035394.webp"
+    ],
+    "video": null,
+    "sort_order": 3
+  }
+]

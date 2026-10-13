@@ -1,9 +1,8 @@
 .home {
   min-height: 100vh;
   overflow-x: hidden;
-  /* 照片级蓝天白云 - 使用可靠的图片源 */
+  /* 蓝天渐变 */
   background:
-    url('https://images.unsplash.com/photo-1504312572408-5f7b074981f2?w=1920&q=90') center center / cover no-repeat fixed,
     linear-gradient(180deg,
       #5BA3D9 0%,
       #7AB8E8 25%,

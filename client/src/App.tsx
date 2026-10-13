@@ -1,10 +1,15 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Home } from './pages/Home';
 import { WorkDetail } from './pages/WorkDetail';
 import { About } from './pages/About';
-import { Admin } from './pages/Admin';
 import './App.css';
+
+// The admin only runs locally (npm run dev); it is left out of the published build
+const Admin = import.meta.env.DEV
+  ? lazy(() => import('./pages/Admin').then(m => ({ default: m.Admin })))
+  : null;
 
 const LANGUAGES = [
   { code: 'zh', label: '中' },
@@ -47,7 +52,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/work/:id" element={<WorkDetail />} />
         <Route path="/about" element={<About />} />
-        <Route path="/admin" element={<Admin />} />
+        {Admin && (
+          <Route path="/admin" element={<Suspense fallback={null}><Admin /></Suspense>} />
+        )}
       </Routes>
     </BrowserRouter>
   );

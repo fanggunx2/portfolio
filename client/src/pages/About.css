@@ -4,9 +4,8 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
-  /* 照片级蓝天白云 - 和首页一致 */
+  /* 蓝天渐变 - 和首页一致 */
   background:
-    url('https://images.unsplash.com/photo-1504312572408-5f7b074981f2?w=1920&q=90') center center / cover no-repeat fixed,
     linear-gradient(180deg,
       #5BA3D9 0%,
       #7AB8E8 25%,

@@ -1,36 +1,23 @@
-export const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-const USE_MOCK = false; // Set to false when backend is deployed
+// In development the local admin server is reached through Vite's proxy (see vite.config.ts).
+// The published site has no server: it reads the JSON files the admin server exports to public/data.
+export const API_BASE = '/api';
+const IS_STATIC = !import.meta.env.DEV;
+
+// Uploaded images are optimized into <name>.webp plus a small <name>-thumb.webp (see server/media.js)
+export const thumbUrl = (url: string) => url.replace(/\.webp$/, '-thumb.webp');
 
 export interface AboutContent {
   title: string;
   body: string;
 }
 
-const ABOUT_STORAGE_KEY = 'wonderbird_about';
-
 export const aboutApi = {
   getAbout: async (): Promise<AboutContent> => {
-    if (USE_MOCK) {
-      // 优先从 localStorage 读取保存的内容
-      const saved = localStorage.getItem(ABOUT_STORAGE_KEY);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-      return {
-        title: '私について',
-        body: 'ここにあなたの自己紹介を書いてください。\nあなたの経歴、スキル、情熱、そしてなぜこの仕事を始めたのかなど、プロフィールとして見せたい情報を自由に入力できます。\n\nWrite your introduction here in Japanese or English.\nShare your background, skills, passion, and what inspired you to start this journey.'
-      };
-    }
-    const res = await fetch(`${API_BASE}/about`);
+    const res = await fetch(IS_STATIC ? '/data/about.json' : `${API_BASE}/about`);
     return res.json();
   },
 
   updateAbout: async (content: AboutContent, token: string): Promise<AboutContent> => {
-    if (USE_MOCK) {
-      // 保存到 localStorage
-      localStorage.setItem(ABOUT_STORAGE_KEY, JSON.stringify(content));
-      return content;
-    }
     const res = await fetch(`${API_BASE}/about`, {
       method: 'PUT',
       headers: {
@@ -43,65 +30,6 @@ export const aboutApi = {
     return res.json();
   },
 };
-
-// Your real works from database
-const MOCK_WORKS: Work[] = [
-  {
-    id: 2,
-    title: 'umbanana',
-    description: '',
-    image_url: '/uploads/1771469108860-323604076.jpg',
-    images: [],
-    video: null,
-    category: 'product',
-    sort_order: 1,
-    created_at: '2024-01-15'
-  },
-  {
-    id: 4,
-    title: 'THE EXCLAMATION',
-    description: 'The seal itself is the stem, and the impression is the dot. Only in the brief interval between pressing and lifting does the exclamation mark become whole—a bridge between the intention of the hand and the resonance on the page.',
-    image_url: '/uploads/1772520013030-657046781.png',
-    images: [],
-    video: null,
-    category: 'product',
-    sort_order: 2,
-    created_at: '2024-02-20'
-  },
-  {
-    id: 5,
-    title: 'FLUITAPE',
-    description: 'Inspired by the fluid rotation of magnetic tape, this player visualizes the passage of time through a tactile, hourglass-like interface. It\'s not just about listening to music; it\'s about feeling the physical weight of every second as it flows through the reels.',
-    image_url: '/uploads/1772522265584-280995992.png',
-    images: [],
-    video: null,
-    category: 'product',
-    sort_order: 3,
-    created_at: '2024-03-10'
-  },
-  {
-    id: 6,
-    title: 'ANNUAL RING RULER',
-    description: 'Inspired by the growing rings of a tree, this ruler helps you measure not just length but time. Each ring represents a year, turning everyday measurements into a journey through memory.',
-    image_url: '/uploads/1772525053159-902245445.jpg',
-    images: [],
-    video: null,
-    category: 'product',
-    sort_order: 4,
-    created_at: '2024-04-05'
-  },
-  {
-    id: 7,
-    title: 'THE PINNED MOMENT',
-    description: 'Inspired by the childhood urge to stop time with a single finger. It turns the relentless ticking into a permanent pause, making the \'now\' last forever.',
-    image_url: '/uploads/1772684882678-246195325.jpg',
-    images: [],
-    video: null,
-    category: 'product',
-    sort_order: 5,
-    created_at: '2024-05-18'
-  }
-];
 
 export interface Work {
   id: number;
@@ -120,11 +48,9 @@ export type Category = 'all' | 'product' | 'interaction' | 'advertising';
 export const api = {
   // Works
   getWorks: async (category?: Category): Promise<Work[]> => {
-    if (USE_MOCK) {
-      if (category && category !== 'all') {
-        return MOCK_WORKS.filter(w => w.category === category);
-      }
-      return MOCK_WORKS;
+    if (IS_STATIC) {
+      const works: Work[] = await (await fetch('/data/works.json')).json();
+      return category && category !== 'all' ? works.filter(w => w.category === category) : works;
     }
     const url = category && category !== 'all'
       ? `${API_BASE}/works?category=${category}`
@@ -134,6 +60,12 @@ export const api = {
   },
 
   getWork: async (id: number): Promise<Work> => {
+    if (IS_STATIC) {
+      const works: Work[] = await (await fetch('/data/works.json')).json();
+      const work = works.find(w => w.id === id);
+      if (!work) throw new Error('Work not found');
+      return work;
+    }
     const res = await fetch(`${API_BASE}/works/${id}`);
     if (!res.ok) throw new Error('Work not found');
     return res.json();

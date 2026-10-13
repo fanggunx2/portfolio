@@ -1,14 +1,13 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { api, API_BASE, type Work, type Category } from '../api';
+import { api, thumbUrl, type Work, type Category } from '../api';
 import './Home.css';
 
 // Helper to get image URL
 const getImageUrl = (path: string) => {
   if (!path) return '';
-  if (path.startsWith('http')) return path;
-  return `${API_BASE.replace('/api', '')}${path}`;
+  return thumbUrl(path);
 };
 
 const categories: { key: Category; labelKey: string }[] = [

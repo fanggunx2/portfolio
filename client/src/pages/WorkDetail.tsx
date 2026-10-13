@@ -51,7 +51,7 @@ export function WorkDetail() {
           {allImages.map((img, index) => (
             <div key={index} className="gallery-item">
               <img
-                src={`http://localhost:3001${img}`}
+                src={`${img}`}
                 alt={`${work.title} ${index + 1}`}
               />
             </div>
@@ -60,7 +60,7 @@ export function WorkDetail() {
           {work.video && (
             <div className="gallery-item video-item">
               <video
-                src={`http://localhost:3001${work.video}`}
+                src={`${work.video}`}
                 controls
                 playsInline
               />

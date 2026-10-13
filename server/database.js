@@ -16,6 +16,15 @@ db.serialize(() => {
     )
   `);
 
+  // Create about table (single row, id = 1)
+  db.run(`
+    CREATE TABLE IF NOT EXISTS about (
+      id INTEGER PRIMARY KEY,
+      title TEXT,
+      body TEXT
+    )
+  `);
+
   // Create admin table
   db.run(`
     CREATE TABLE IF NOT EXISTS admin (

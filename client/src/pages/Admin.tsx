@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, type FormEvent } from 'react';
 import Cropper from 'react-easy-crop';
-import { api, aboutApi, type Work, type Category, type AboutContent } from '../api';
+import { api, aboutApi, thumbUrl, type Work, type Category, type AboutContent } from '../api';
 import './Admin.css';
 
 interface CropArea {
@@ -679,7 +679,7 @@ export function Admin() {
                             onDrop={() => handleDrop(i)}
                             onClick={() => handleSetMainImage(i)}
                           >
-                            <img src={`http://localhost:3001${img}`} alt={`${i + 1}`} />
+                            <img src={thumbUrl(img)} alt={`${i + 1}`} />
                             {editMainImageIndex === i && <span className="main-badge">MAIN</span>}
                             <button
                               type="button"
@@ -806,7 +806,7 @@ export function Admin() {
                       </button>
                     </div>
                     <img
-                      src={`http://localhost:3001${work.image_url}`}
+                      src={thumbUrl(work.image_url)}
                       alt={work.title}
                     />
                     <div className="work-details">
