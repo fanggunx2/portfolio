@@ -57,6 +57,7 @@ export function Home() {
   const SELECTED_RADIUS_MULTIPLIER = 2.0; // 选中时变大的倍数
   const GROWTH_SPEED = 0.08; // 变大的速度
   const CIRCLE_RADIUS = 200; // 围成圆的半径
+  const isMobile = () => window.innerWidth < 768; // 手机屏幕：星球更小、边距更窄
 
   // 初始化星球位置和速度
   const initPlanets = useCallback((worksData: Work[]) => {
@@ -87,7 +88,7 @@ export function Home() {
       const vy = Math.sin(angle) * speed;
 
       // 固定大小（统一尺寸）
-      const radius = 60;
+      const radius = isMobile() ? 42 : 60;
 
       return { id: work.id, work, x, y, vx, vy, radius, currentRadius: radius, rotation: angle };
     });
@@ -177,7 +178,10 @@ export function Home() {
 
       // 只有在有星球数据时才更新
       if (planetsRef.current.length > 0) {
-        const padding = 60; // 边缘padding
+        const padding = isMobile() ? 16 : 60; // 边缘padding
+        const topPadding = isMobile() ? 64 : padding; // 避开顶部导航
+        const bottomPadding = isMobile() ? 90 : padding; // 避开底部分类栏
+        const circleRadius = Math.min(CIRCLE_RADIUS, window.innerWidth / 2 - 70); // 窄屏时缩小圆圈
         const selectedId = selectedIdRef.current;
         // 悬停或锁定时都聚成圆圈
         const hoveredCat = hoveredCategoryRef.current || lockedCategoryRef.current;
@@ -197,8 +201,8 @@ export function Home() {
             const angleStep = (Math.PI * 2) / categoryPlanets.length;
 
             categoryPlanets.forEach((planet, index) => {
-              const targetX = centerX + Math.cos(angleStep * index - Math.PI / 2) * CIRCLE_RADIUS;
-              const targetY = centerY + Math.sin(angleStep * index - Math.PI / 2) * CIRCLE_RADIUS;
+              const targetX = centerX + Math.cos(angleStep * index - Math.PI / 2) * circleRadius;
+              const targetY = centerY + Math.sin(angleStep * index - Math.PI / 2) * circleRadius;
 
               // 直接固定位置，不抖动
               planet.x = targetX;
@@ -312,12 +316,12 @@ export function Home() {
             hitWall = true;
           }
 
-          if (y - visualBoundaryRadius < padding) {
-            y = padding + visualBoundaryRadius;
+          if (y - visualBoundaryRadius < topPadding) {
+            y = topPadding + visualBoundaryRadius;
             vy = Math.abs(vy) > 0.05 ? Math.abs(vy) : 0.3;
             hitWall = true;
-          } else if (y + visualBoundaryRadius > window.innerHeight - padding) {
-            y = window.innerHeight - padding - visualBoundaryRadius;
+          } else if (y + visualBoundaryRadius > window.innerHeight - bottomPadding) {
+            y = window.innerHeight - bottomPadding - visualBoundaryRadius;
             vy = Math.abs(vy) > 0.05 ? -Math.abs(vy) : -0.3;
             hitWall = true;
           }

@@ -1,6 +1,6 @@
 .work-detail {
   min-height: 100vh;
-  padding: 40px;
+  padding: 104px 40px 40px; /* 顶部留出固定导航的高度 */
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -77,7 +77,7 @@
 
 @media (max-width: 768px) {
   .work-detail {
-    padding: 20px;
+    padding: 80px 20px 20px;
   }
 
   .work-info h1 {

@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Home } from './pages/Home';
 import { WorkDetail } from './pages/WorkDetail';
@@ -19,9 +19,11 @@ const LANGUAGES = [
 
 function Navigation() {
   const { t, i18n } = useTranslation();
+  // Work pages have a white background, so the nav switches to dark text there
+  const onLightPage = useLocation().pathname.startsWith('/work/');
 
   return (
-    <nav className="nav">
+    <nav className={`nav ${onLightPage ? 'nav--on-light' : ''}`}>
       <Link to="/" className="home-link">
         <img src="/bird-icon.png" alt="Home" className="bird-icon" />
         <span className="home-text">WONDER BIRD</span>

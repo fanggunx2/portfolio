@@ -86,6 +86,8 @@
   justify-content: center;
   gap: 32px;
   padding: 0 20px;
+  width: max-content; /* 居中时不被压缩换行 */
+  white-space: nowrap;
   z-index: 1000;
   background: transparent;
 }
@@ -223,6 +225,10 @@
 
   .works-universe {
     min-height: 60vh;
+  }
+
+  .category-tabs {
+    gap: 24px;
   }
 
   .category-tabs {

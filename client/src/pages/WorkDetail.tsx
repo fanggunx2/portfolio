@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { api, type Work } from '../api';
 import './WorkDetail.css';
 
 export function WorkDetail() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ export function WorkDetail() {
   return (
     <div className="work-detail">
       <Link to="/" className="back-link">
-        ← 戻る
+        ← {t('work.back')}
       </Link>
 
       <div className="work-content">

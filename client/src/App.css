@@ -131,10 +131,15 @@ body {
 }
 
 .home,
-.work-detail,
 .about,
 .admin {
   padding-top: 0;
+}
+
+.home,
+.work-detail,
+.about,
+.admin {
   animation: fadeIn 0.6s ease-out;
 }
 
@@ -172,6 +177,34 @@ body {
   .nav-links a {
     font-size: 0.8rem;
   }
+}
+
+/* Nav on white pages (work detail) */
+.nav--on-light {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.nav--on-light .bird-icon {
+  filter: brightness(0);
+}
+
+.nav--on-light .home-text,
+.nav--on-light .nav-links a,
+.nav--on-light .lang-btn {
+  color: var(--text-secondary);
+  text-shadow: none;
+}
+
+.nav--on-light .home-text,
+.nav--on-light .lang-btn.active,
+.nav--on-light .nav-links a:hover {
+  color: var(--text);
+}
+
+.nav--on-light .nav-links a::after {
+  background: var(--text);
 }
 
 /* Language Switcher */

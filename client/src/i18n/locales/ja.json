@@ -14,5 +14,8 @@
   },
   "about": {
     "defaultTitle": "私について"
+  },
+  "work": {
+    "back": "戻る"
   }
 }

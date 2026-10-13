@@ -14,5 +14,8 @@
   },
   "about": {
     "defaultTitle": "关于我"
+  },
+  "work": {
+    "back": "返回"
   }
 }
